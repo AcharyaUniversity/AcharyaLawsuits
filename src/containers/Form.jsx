@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -53,6 +54,7 @@ function Form() {
   const [invalid, setInvalid] = useState(false);
 
   const { setAlertMessage, setAlertOpen } = useAlert();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getCourtOptions();
@@ -86,6 +88,14 @@ function Form() {
           severity: "error",
           title: "Invalid entries",
           message: "Please fill all the required fields",
+        });
+        setAlertOpen(true);
+      } else {
+        navigate("/index", { replace: true });
+        setAlertMessage({
+          severity: "success",
+          title: "Form submitted",
+          message: "Case has been added to the database",
         });
         setAlertOpen(true);
       }
