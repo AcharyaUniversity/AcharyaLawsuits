@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,9 +9,12 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
+import useAlert from "../hooks/useAlert";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import apiUrl from "../services/api";
+import axios from "axios";
 
 const initValues = {
   caseType: "",
@@ -30,14 +33,63 @@ const initValues = {
   remarks: "",
 };
 
+const requiredFields = [
+  "caseType",
+  "caseNumber",
+  "advoName",
+  "advoContact",
+  "plantiff",
+  "defendants",
+  "court",
+  "stageOfCase",
+  "caseContent",
+  "caseResult",
+  "remarks",
+];
+
 function Form() {
   const [values, setValues] = useState(initValues);
+  const [courtOptions, setCourtOptions] = useState([]);
+  const [invalid, setInvalid] = useState(false);
+
+  const { setAlertMessage, setAlertOpen } = useAlert();
+
+  useEffect(() => {
+    getCourtOptions();
+  }, []);
+
+  const getCourtOptions = async () => {
+    await axios(`${apiUrl}/court`)
+      .then((res) =>
+        setCourtOptions(
+          res.data.data.map((obj) => ({
+            value: obj.court_id,
+            label: obj.court_name,
+          }))
+        )
+      )
+      .catch((err) => console.error(err));
+  };
 
   const handleChange = (e) => {
     setValues((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleSubmit = async () => {
+    requiredFields.forEach((field) => {
+      if (!values[field]) {
+        setInvalid(true);
+        setAlertMessage({
+          severity: "error",
+          title: "Invalid entries",
+          message: "Please fill all the required fields",
+        });
+        setAlertOpen(true);
+      }
+    });
   };
 
   return (
@@ -52,7 +104,7 @@ function Form() {
         {/* 1st row */}
         <>
           <Grid item xs={12} md={4}>
-            <FormControl fullWidth required>
+            <FormControl fullWidth required error={invalid && !values.caseType}>
               <InputLabel>Case type</InputLabel>
               <Select
                 name="caseType"
@@ -74,6 +126,7 @@ function Form() {
               value={values.caseNumber}
               onChange={handleChange}
               required
+              error={invalid && !values.caseNumber}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -84,6 +137,7 @@ function Form() {
               value={values.advoName}
               onChange={handleChange}
               required
+              error={invalid && !values.advoName}
             />
           </Grid>
         </>
@@ -98,6 +152,7 @@ function Form() {
               value={values.advoContact}
               onChange={handleChange}
               required
+              error={invalid && !values.advoContact}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -108,6 +163,7 @@ function Form() {
               value={values.plantiff}
               onChange={handleChange}
               required
+              error={invalid && !values.plantiff}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -118,6 +174,7 @@ function Form() {
               value={values.defendants}
               onChange={handleChange}
               required
+              error={invalid && !values.defendants}
             />
           </Grid>
         </>
@@ -164,7 +221,7 @@ function Form() {
         {/* 4th row */}
         <>
           <Grid item xs={12} md={4}>
-            <FormControl fullWidth required>
+            <FormControl fullWidth required error={invalid && !values.court}>
               <InputLabel>Court</InputLabel>
               <Select
                 name="court"
@@ -172,14 +229,22 @@ function Form() {
                 value={values.court}
                 onChange={handleChange}
               >
-                <MenuItem value={"10"}>Ten</MenuItem>
-                <MenuItem value={"20"}>Twenty</MenuItem>
-                <MenuItem value={"30"}>Thirty</MenuItem>
+                {courtOptions.map((op, i) => {
+                  return (
+                    <MenuItem key={i} value={op.value}>
+                      {op.label}
+                    </MenuItem>
+                  );
+                })}
               </Select>
             </FormControl>
           </Grid>
           <Grid item xs={12} md={4}>
-            <FormControl fullWidth required>
+            <FormControl
+              fullWidth
+              required
+              error={invalid && !values.stageOfCase}
+            >
               <InputLabel>Stage of the case</InputLabel>
               <Select
                 name="stageOfCase"
@@ -194,7 +259,11 @@ function Form() {
             </FormControl>
           </Grid>
           <Grid item xs={12} md={4}>
-            <FormControl fullWidth required>
+            <FormControl
+              fullWidth
+              required
+              error={invalid && !values.caseResult}
+            >
               <InputLabel>Case result</InputLabel>
               <Select
                 name="caseResult"
@@ -222,6 +291,7 @@ function Form() {
               value={values.caseContent}
               onChange={handleChange}
               required
+              error={invalid && !values.caseContent}
             />
           </Grid>
           <Grid item flexGrow={1}>
@@ -234,12 +304,14 @@ function Form() {
               value={values.remarks}
               onChange={handleChange}
               required
+              error={invalid && !values.remarks}
             />
           </Grid>
           <Grid item>
             <Button
               variant="contained"
               sx={{ borderRadius: 2, fontSize: "1.1rem" }}
+              onClick={() => handleSubmit()}
             >
               <strong>Submit</strong>
             </Button>
