@@ -1,5 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { dateToString } from "../utils/general";
+import apiUrl from "../services/api";
+import axios from "axios";
 
 const gridStyle = {
   mb: 7,
@@ -15,46 +21,68 @@ const gridStyle = {
     background: "#FEFBFF",
     borderbottom: "1px solid #767680",
   },
-  ".MuiDataGrid-virtualScroller": {
-    overflow: "hidden",
-  },
 };
 
 function TableData() {
   const [pageSize, setPageSize] = useState(20);
+  const [rows, setRows] = useState([]);
+
+  const navigate = useNavigate();
 
   const columns = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "firstName", headerName: "First name", width: 130 },
-    { field: "lastName", headerName: "Last name", width: 130 },
+    { field: "case_no", headerName: "Case number" },
+    { field: "case_type", headerName: "Case type" },
+    { field: "advocate_or_firm_name", headerName: "Advocate/Firm", flex: 1 },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      width: 90,
+      field: "advocate_or_firm_contact_no",
+      headerName: "Firm contact",
+      flex: 1,
     },
+    { field: "plaintiffs", headerName: "Plantiffs", flex: 1 },
+    { field: "defendants", headerName: "Defendants", flex: 1 },
+    { field: "appeal_ref_no", headerName: "Appeal ref" },
+    { field: "last_hearing_date", headerName: "Last hearing" },
+    { field: "next_hearing_date", headerName: "Next hearing" },
+    { field: "court_name", headerName: "Court" },
+    { field: "stage_of_the_case", headerName: "Stage" },
+    { field: "case_status", headerName: "Result" },
+    { field: "case_content", headerName: "Content" },
+    { field: "remarks", headerName: "Remarks" },
     {
-      field: "fullName",
-      headerName: "Full name",
-      description: "This column has a value getter and is not sortable.",
-      sortable: false,
-      width: 160,
-      valueGetter: (params) =>
-        `${params.row.firstName || ""} ${params.row.lastName || ""}`,
+      field: "update",
+      headerName: "Update",
+      flex: 1,
+      type: "actions",
+      getActions: (params) => [
+        <IconButton
+          onClick={() => navigate(`/CaseForm/Update/${params.row.id}`)}
+        >
+          <EditIcon />
+        </IconButton>,
+      ],
     },
   ];
 
-  const rows = [
-    { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-    { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-    { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-    { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-    { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-    { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-    { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-    { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-    { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-  ];
+  const getCases = async () => {
+    await axios(
+      `${apiUrl}/fetchAllCourtCasesDetails?page=0&page_size=999&sort=created_date`
+    )
+      .then((res) => {
+        // console.log(res.data.data.Paginated_data.content[0]);
+        setRows(
+          res.data.data.Paginated_data.content.map((obj) => ({
+            ...obj,
+            // last_hearing_date: dateToString(obj.last_hearing_date),
+            // next_hearing_date: dateToString(obj.next_hearing_date),
+          }))
+        );
+      })
+      .catch((err) => console.error(err));
+  };
+
+  useEffect(() => {
+    getCases();
+  }, []);
 
   return (
     <DataGrid

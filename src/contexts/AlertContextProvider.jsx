@@ -8,7 +8,7 @@ export const AlertContext = createContext();
 const useStyles = makeStyles((theme) => ({
   alertContainer: {
     position: "fixed",
-    top: 61,
+    top: 53,
     left: "50%",
     transform: "translate(-50%, 0)",
     width: "90%",

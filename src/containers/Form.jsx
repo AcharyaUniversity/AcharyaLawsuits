@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -23,7 +23,7 @@ const initValues = {
   advoName: "",
   advoContact: "",
   appealRef: "",
-  plantiff: "",
+  plaintiff: "",
   defendants: "",
   court: "",
   lastHearing: null,
@@ -39,7 +39,7 @@ const requiredFields = [
   "caseNumber",
   "advoName",
   "advoContact",
-  "plantiff",
+  "plaintiff",
   "defendants",
   "court",
   "stageOfCase",
@@ -49,16 +49,49 @@ const requiredFields = [
 ];
 
 function Form() {
+  const [isNew, setIsNew] = useState(true);
   const [values, setValues] = useState(initValues);
   const [courtOptions, setCourtOptions] = useState([]);
   const [invalid, setInvalid] = useState(false);
 
   const { setAlertMessage, setAlertOpen } = useAlert();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { id } = useParams();
 
   useEffect(() => {
     getCourtOptions();
+
+    if (pathname.toLowerCase() === "/caseform/new") {
+      setIsNew(true);
+    } else {
+      setIsNew(false);
+      getCaseDetails();
+    }
   }, []);
+
+  const getCaseDetails = async () => {
+    await axios(`${apiUrl}/courtCases/${id}`)
+      .then((res) => {
+        setValues({
+          caseType: res.data.data.case_type,
+          caseNumber: res.data.data.case_no,
+          advoName: res.data.data.advocate_or_firm_name,
+          advoContact: res.data.data.advocate_or_firm_contact_no,
+          appealRef: res.data.data.appeal_ref_no,
+          plaintiff: res.data.data.plaintiffs,
+          defendants: res.data.data.defendants,
+          court: res.data.data.court_id,
+          lastHearing: res.data.data.last_hearing_date,
+          nextHearing: res.data.data.next_hearing_date,
+          stageOfCase: res.data.data.stage_of_the_case,
+          caseContent: res.data.data.case_content,
+          caseResult: res.data.data.case_status,
+          remarks: res.data.data.remarks,
+        });
+      })
+      .catch((err) => console.log(err));
+  };
 
   const getCourtOptions = async () => {
     await axios(`${apiUrl}/court`)
@@ -80,26 +113,117 @@ function Form() {
     }));
   };
 
-  const handleSubmit = async () => {
-    requiredFields.forEach((field) => {
-      if (!values[field]) {
-        setInvalid(true);
-        setAlertMessage({
-          severity: "error",
-          title: "Invalid entries",
-          message: "Please fill all the required fields",
+  const requiredFieldsValid = () => {
+    for (let i = 0; i < requiredFields.length; i++)
+      if (!values[requiredFields[i]]) return false;
+    return true;
+  };
+
+  const handleCreate = async () => {
+    if (!requiredFieldsValid()) {
+      setInvalid(true);
+      setAlertMessage({
+        severity: "error",
+        title: "Invalid entries",
+        message: "Please fill all the required fields",
+      });
+      setAlertOpen(true);
+    } else {
+      setInvalid(false);
+      const temp = {
+        active: true,
+        advocate_or_firm_contact_no: values.advoContact,
+        advocate_or_firm_name: values.advoName,
+        appeal_ref_no: values.appealRef,
+        case_content: values.caseContent,
+        case_no: values.caseNumber,
+        case_status: values.caseResult,
+        case_type: values.caseType,
+        court_id: values.court,
+        defendants: values.defendants,
+        last_hearing_date: values.lastHearing,
+        next_hearing_date: values.nextHearing,
+        plaintiffs: values.plaintiff,
+        remarks: values.remarks,
+        stage_of_the_case: values.stageOfCase,
+      };
+      await axios
+        .post(`${apiUrl}/courtCases`, temp)
+        .then((res) => {
+          navigate("/Index", { replace: true });
+          setAlertMessage({
+            severity: "success",
+            title: "Form submitted",
+            message: "Case has been added to the database",
+          });
+          setAlertOpen(true);
+        })
+        .catch((err) => {
+          console.error(err);
+          setAlertMessage({
+            severity: "error",
+            title: "An error occured",
+            message: err.response.data
+              ? err.response.data.message
+              : "Case has been added to the database",
+          });
+          setAlertOpen(true);
         });
-        setAlertOpen(true);
-      } else {
-        navigate("/index", { replace: true });
-        setAlertMessage({
-          severity: "success",
-          title: "Form submitted",
-          message: "Case has been added to the database",
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (!requiredFieldsValid()) {
+      setInvalid(true);
+      setAlertMessage({
+        severity: "error",
+        title: "Invalid entries",
+        message: "Please fill all the required fields",
+      });
+      setAlertOpen(true);
+    } else {
+      setInvalid(false);
+      const temp = {
+        active: true,
+        court_cases_id: id,
+        advocate_or_firm_contact_no: values.advoContact,
+        advocate_or_firm_name: values.advoName,
+        appeal_ref_no: values.appealRef,
+        case_content: values.caseContent,
+        case_no: values.caseNumber,
+        case_status: values.caseResult,
+        case_type: values.caseType,
+        court_id: values.court,
+        defendants: values.defendants,
+        last_hearing_date: values.lastHearing,
+        next_hearing_date: values.nextHearing,
+        plaintiffs: values.plaintiff,
+        remarks: values.remarks,
+        stage_of_the_case: values.stageOfCase,
+      };
+      await axios
+        .put(`${apiUrl}/courtCases/${id}`, temp)
+        .then((res) => {
+          navigate("/Index", { replace: true });
+          setAlertMessage({
+            severity: "success",
+            title: "Form submitted",
+            message: "Case has been added to the database",
+          });
+          setAlertOpen(true);
+        })
+        .catch((err) => {
+          console.error(err);
+          setAlertMessage({
+            severity: "error",
+            title: "An error occured",
+            message: err.response.data
+              ? err.response.data.message
+              : "Case has been added to the database",
+          });
+          setAlertOpen(true);
         });
-        setAlertOpen(true);
-      }
-    });
+    }
   };
 
   return (
@@ -122,9 +246,7 @@ function Form() {
                 value={values.caseType}
                 onChange={handleChange}
               >
-                <MenuItem value={"10"}>Ten</MenuItem>
-                <MenuItem value={"20"}>Twenty</MenuItem>
-                <MenuItem value={"30"}>Thirty</MenuItem>
+                <MenuItem value={"Non criminal"}>Non criminal</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -168,12 +290,12 @@ function Form() {
           <Grid item xs={12} md={4}>
             <TextField
               fullWidth
-              name="plantiff"
-              label="Plantiffs"
-              value={values.plantiff}
+              name="plaintiff"
+              label="Plaintiffs"
+              value={values.plaintiff}
               onChange={handleChange}
               required
-              error={invalid && !values.plantiff}
+              error={invalid && !values.plaintiff}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -262,9 +384,8 @@ function Form() {
                 value={values.stageOfCase}
                 onChange={handleChange}
               >
-                <MenuItem value={"10"}>Ten</MenuItem>
-                <MenuItem value={"20"}>Twenty</MenuItem>
-                <MenuItem value={"30"}>Thirty</MenuItem>
+                <MenuItem value={"Pending"}>Pending</MenuItem>
+                <MenuItem value={"Disclosed"}>Disclosed</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -281,9 +402,8 @@ function Form() {
                 value={values.caseResult}
                 onChange={handleChange}
               >
-                <MenuItem value={"10"}>Ten</MenuItem>
-                <MenuItem value={"20"}>Twenty</MenuItem>
-                <MenuItem value={"30"}>Thirty</MenuItem>
+                <MenuItem value={"Pending"}>Pending</MenuItem>
+                <MenuItem value={"Disclosed"}>Disclosed</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -321,9 +441,9 @@ function Form() {
             <Button
               variant="contained"
               sx={{ borderRadius: 2, fontSize: "1.1rem" }}
-              onClick={() => handleSubmit()}
+              onClick={() => (isNew ? handleCreate() : handleUpdate())}
             >
-              <strong>Submit</strong>
+              <strong>{isNew ? "Create" : "Update"}</strong>
             </Button>
           </Grid>
         </>
