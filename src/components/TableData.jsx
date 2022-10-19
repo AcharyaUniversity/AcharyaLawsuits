@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { dateToString } from "../utils/general";
 import apiUrl from "../services/api";
@@ -49,16 +50,33 @@ function TableData() {
     { field: "case_content", headerName: "Content" },
     { field: "remarks", headerName: "Remarks" },
     {
-      field: "update",
-      headerName: "Update",
+      field: "edit",
+      headerName: "Edit",
       flex: 1,
       type: "actions",
       getActions: (params) => [
-        <IconButton
-          onClick={() => navigate(`/CaseForm/Update/${params.row.id}`)}
-        >
-          <EditIcon />
-        </IconButton>,
+        <Tooltip title="Edit">
+          <IconButton
+            onClick={() => navigate(`/CaseForm/Update/${params.row.id}`)}
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>,
+      ],
+    },
+    {
+      field: "addHearing",
+      headerName: "Add",
+      flex: 1,
+      type: "actions",
+      getActions: (params) => [
+        <Tooltip title="Add hearing">
+          <IconButton
+            onClick={() => navigate(`/CaseForm/AddHearing/${params.row.id}`)}
+          >
+            <AddIcon sx={{ color: "green" }} />
+          </IconButton>
+        </Tooltip>,
       ],
     },
   ];
@@ -68,12 +86,11 @@ function TableData() {
       `${apiUrl}/fetchAllCourtCasesDetails?page=0&page_size=999&sort=created_date`
     )
       .then((res) => {
-        // console.log(res.data.data.Paginated_data.content[0]);
         setRows(
           res.data.data.Paginated_data.content.map((obj) => ({
             ...obj,
-            // last_hearing_date: dateToString(obj.last_hearing_date),
-            // next_hearing_date: dateToString(obj.next_hearing_date),
+            last_hearing_date: dateToString(new Date(obj.last_hearing_date)),
+            next_hearing_date: dateToString(new Date(obj.next_hearing_date)),
           }))
         );
       })

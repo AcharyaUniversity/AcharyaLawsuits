@@ -23,6 +23,7 @@ function App() {
               <Route exact path="/Index" element={<Index />} />
               <Route exact path="/CaseForm/New" element={<Form />} />
               <Route exact path="/CaseForm/Update/:id" element={<Form />} />
+              <Route exact path="/CaseForm/AddHearing/:id" element={<Form />} />
               <Route exact path="/Stage" element={<></>} />
               <Route exact path="/Report" element={<></>} />
             </Routes>
