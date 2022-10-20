@@ -24,35 +24,19 @@ const gridStyle = {
   },
 };
 
-function TableData() {
+function StageTableData() {
   const [pageSize, setPageSize] = useState(20);
   const [rows, setRows] = useState([]);
 
   const navigate = useNavigate();
 
   const columns = [
-    { field: "case_no", headerName: "Case number" },
-    { field: "case_type", headerName: "Case type" },
-    { field: "advocate_or_firm_name", headerName: "Advocate/Firm", flex: 1 },
-    {
-      field: "advocate_or_firm_contact_no",
-      headerName: "Firm contact",
-      flex: 1,
-    },
-    { field: "plaintiffs", headerName: "Plantiffs", flex: 1 },
-    { field: "defendants", headerName: "Defendants", flex: 1 },
-    { field: "appeal_ref_no", headerName: "Appeal ref" },
-    { field: "last_hearing_date", headerName: "Last hearing" },
-    { field: "next_hearing_date", headerName: "Next hearing" },
-    { field: "court_name", headerName: "Court" },
-    { field: "stage_of_the_case", headerName: "Stage" },
-    { field: "case_status", headerName: "Result" },
-    { field: "case_content", headerName: "Content" },
-    { field: "remarks", headerName: "Remarks" },
+    { field: "case_no", headerName: "Stage number", flex: 1 },
+    { field: "case_type", headerName: "Stage", flex: 1 },
     {
       field: "edit",
       headerName: "Edit",
-      flex: 1,
+      width: 100,
       type: "actions",
       getActions: (params) => [
         <Tooltip title="Edit">
@@ -64,26 +48,11 @@ function TableData() {
         </Tooltip>,
       ],
     },
-    {
-      field: "addHearing",
-      headerName: "Add",
-      flex: 1,
-      type: "actions",
-      getActions: (params) => [
-        <Tooltip title="Add hearing">
-          <IconButton
-            onClick={() => navigate(`/CaseForm/AddHearing/${params.row.id}`)}
-          >
-            <AddIcon sx={{ color: "green" }} />
-          </IconButton>
-        </Tooltip>,
-      ],
-    },
   ];
 
   const getCases = async () => {
     await axios(
-      `${apiUrl}/fetchAllCourtCasesDetails?page=0&page_size=999&sort=created_date`
+      `${apiUrl}/fetchAllStageOfTheCaseDetail?page=0&page_size=999&sort=created_date`
     )
       .then((res) => {
         setRows(
@@ -125,4 +94,4 @@ function TableData() {
   );
 }
 
-export default TableData;
+export default StageTableData;

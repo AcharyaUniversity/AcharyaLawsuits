@@ -14,6 +14,7 @@ import useAlert from "../hooks/useAlert";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 import apiUrl from "../services/api";
 import axios from "axios";
 
@@ -52,6 +53,7 @@ function Form() {
   const [formType, setFormType] = useState("");
   const [values, setValues] = useState(initValues);
   const [courtOptions, setCourtOptions] = useState([]);
+  const [stageOptions, setStageOptions] = useState([]);
   const [invalid, setInvalid] = useState(false);
 
   const { setAlertMessage, setAlertOpen } = useAlert();
@@ -61,6 +63,7 @@ function Form() {
 
   useEffect(() => {
     getCourtOptions();
+    getStageOptions();
 
     if (pathname.toLowerCase() === "/caseform/new") {
       setFormType("new");
@@ -87,19 +90,23 @@ function Form() {
           plaintiff: res.data.data.plaintiffs,
           defendants: res.data.data.defendants,
           court: res.data.data.court_id,
-          lastHearing:
-            formType === "update"
-              ? res.data.data.last_hearing_date
-              : res.data.data.next_hearing_date,
-          nextHearing:
-            formType === "update" ? res.data.data.next_hearing_date : null,
+          lastHearing: res.data.data.last_hearing_date
+            ? formType === "update"
+              ? dayjs(res.data.data.last_hearing_date)
+              : dayjs(res.data.data.next_hearing_date)
+            : null,
+          nextHearing: res.data.data.next_hearing_date
+            ? formType === "update"
+              ? dayjs(res.data.data.next_hearing_date)
+              : null
+            : null,
           stageOfCase: res.data.data.stage_of_the_case,
           caseContent: res.data.data.case_content,
           caseResult: res.data.data.case_status,
           remarks: res.data.data.remarks,
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   const getCourtOptions = async () => {
@@ -109,6 +116,18 @@ function Form() {
           res.data.data.map((obj) => ({
             value: obj.court_id,
             label: obj.court_name,
+          }))
+        )
+      )
+      .catch((err) => console.error(err));
+  };
+  const getStageOptions = async () => {
+    await axios(`${apiUrl}/stageOfTheCase`)
+      .then((res) =>
+        setStageOptions(
+          res.data.data.map((obj) => ({
+            value: obj.stage_id,
+            label: obj.stage_name,
           }))
         )
       )
@@ -342,6 +361,7 @@ function Form() {
                 value={values.caseType}
                 onChange={handleChange}
               >
+                <MenuItem value={"Criminal"}>Criminal</MenuItem>
                 <MenuItem value={"Non criminal"}>Non criminal</MenuItem>
               </Select>
             </FormControl>
@@ -470,7 +490,14 @@ function Form() {
                 onChange={handleChange}
               >
                 <MenuItem value={"Pending"}>Pending</MenuItem>
-                <MenuItem value={"Disclosed"}>Disclosed</MenuItem>
+                <MenuItem value={"Closed"}>Closed</MenuItem>
+                {stageOptions.map((op, i) => {
+                  return (
+                    <MenuItem key={i} value={op.value}>
+                      {op.label}
+                    </MenuItem>
+                  );
+                })}
               </Select>
             </FormControl>
           </Grid>
@@ -488,7 +515,7 @@ function Form() {
                 onChange={handleChange}
               >
                 <MenuItem value={"Pending"}>Pending</MenuItem>
-                <MenuItem value={"Disclosed"}>Disclosed</MenuItem>
+                <MenuItem value={"Closed"}>Closed</MenuItem>
               </Select>
             </FormControl>
           </Grid>

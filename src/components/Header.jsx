@@ -24,10 +24,6 @@ const navItems = [
     label: "Stage",
     url: "/stage",
   },
-  {
-    label: "Report",
-    url: "/report",
-  },
 ];
 
 function Header(props) {
@@ -87,7 +83,12 @@ function Header(props) {
       <AppBar component="nav" color="headerWhite" elevation={2}>
         <Toolbar sx={{ justifyContent: "flex-end" }}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <img src={AcharyaImg} alt="Acharya" />
+            <img
+              src={AcharyaImg}
+              alt="Acharya"
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/")}
+            />
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems.map((item) => (
