@@ -9,7 +9,6 @@ import ThemeContextProvider from "./contexts/ThemeContextProvider";
 import AlertContextProvider from "./contexts/AlertContextProvider";
 import Header from "./components/Header";
 import Index from "./containers/Index";
-import Stage from "./containers/Stage";
 import Form from "./containers/Form";
 
 function App() {
@@ -25,7 +24,6 @@ function App() {
               <Route exact path="/CaseForm/New" element={<Form />} />
               <Route exact path="/CaseForm/Update/:id" element={<Form />} />
               <Route exact path="/CaseForm/AddHearing/:id" element={<Form />} />
-              <Route exact path="/Stage" element={<Stage />} />
             </Routes>
           </Box>
         </Router>

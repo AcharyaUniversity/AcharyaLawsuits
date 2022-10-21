@@ -361,8 +361,14 @@ function Form() {
                 value={values.caseType}
                 onChange={handleChange}
               >
-                <MenuItem value={"Criminal"}>Criminal</MenuItem>
-                <MenuItem value={"Non criminal"}>Non criminal</MenuItem>
+                <MenuItem value="Original Suit">Original Suit</MenuItem>
+                <MenuItem value="Criminal Case">Criminal Case</MenuItem>
+                <MenuItem value="Writ Petition">Writ Petition</MenuItem>
+                <MenuItem value="Writ Appeal">Writ Appeal</MenuItem>
+                <MenuItem value="Execution Petition">
+                  Execution Petition
+                </MenuItem>
+                <MenuItem value="Company appeal">Company appeal</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -477,29 +483,15 @@ function Form() {
             </FormControl>
           </Grid>
           <Grid item xs={12} md={4}>
-            <FormControl
+            <TextField
               fullWidth
+              name="stageOfCase"
+              label="Stage of the case"
+              value={values.stageOfCase}
+              onChange={handleChange}
               required
               error={invalid && !values.stageOfCase}
-            >
-              <InputLabel>Stage of the case</InputLabel>
-              <Select
-                name="stageOfCase"
-                label="Stage of the case"
-                value={values.stageOfCase}
-                onChange={handleChange}
-              >
-                <MenuItem value={"Pending"}>Pending</MenuItem>
-                <MenuItem value={"Closed"}>Closed</MenuItem>
-                {stageOptions.map((op, i) => {
-                  return (
-                    <MenuItem key={i} value={op.value}>
-                      {op.label}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
+            />
           </Grid>
           <Grid item xs={12} md={4}>
             <FormControl
