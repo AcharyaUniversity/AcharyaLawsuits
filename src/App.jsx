@@ -10,6 +10,7 @@ import AlertContextProvider from "./contexts/AlertContextProvider";
 import Header from "./components/Header";
 import Index from "./containers/Index";
 import Form from "./containers/Form";
+import Report from "./components/Report";
 
 function App() {
   return (
@@ -19,11 +20,12 @@ function App() {
           <Header />
           <Box mt={7.5}>
             <Routes>
-              <Route exact path="/" element={<Navigate to="/index" />} />
+              <Route exact path="/" element={<Navigate to="/Index" />} />
               <Route exact path="/Index" element={<Index />} />
               <Route exact path="/CaseForm/New" element={<Form />} />
               <Route exact path="/CaseForm/Update/:id" element={<Form />} />
               <Route exact path="/CaseForm/AddHearing/:id" element={<Form />} />
+              <Route exact path="/Report/:id" element={<Report />} />
             </Routes>
           </Box>
         </Router>

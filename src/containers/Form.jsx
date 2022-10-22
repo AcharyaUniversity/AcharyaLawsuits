@@ -17,6 +17,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import apiUrl from "../services/api";
 import axios from "axios";
+import { dateToString } from "../utils/general";
 
 const initValues = {
   caseType: "",
@@ -53,7 +54,6 @@ function Form() {
   const [formType, setFormType] = useState("");
   const [values, setValues] = useState(initValues);
   const [courtOptions, setCourtOptions] = useState([]);
-  const [stageOptions, setStageOptions] = useState([]);
   const [invalid, setInvalid] = useState(false);
 
   const { setAlertMessage, setAlertOpen } = useAlert();
@@ -63,7 +63,6 @@ function Form() {
 
   useEffect(() => {
     getCourtOptions();
-    getStageOptions();
 
     if (pathname.toLowerCase() === "/caseform/new") {
       setFormType("new");
@@ -90,14 +89,14 @@ function Form() {
           plaintiff: res.data.data.plaintiffs,
           defendants: res.data.data.defendants,
           court: res.data.data.court_id,
-          lastHearing: res.data.data.last_hearing_date
+          lastHearing: res.data.data.fronted_use_last_hearing_date
             ? formType === "update"
-              ? dayjs(res.data.data.last_hearing_date)
-              : dayjs(res.data.data.next_hearing_date)
+              ? dayjs(res.data.data.fronted_use_last_hearing_date)
+              : dayjs(res.data.data.fronted_use_next_hearing_date)
             : null,
-          nextHearing: res.data.data.next_hearing_date
+          nextHearing: res.data.data.fronted_use_next_hearing_date
             ? formType === "update"
-              ? dayjs(res.data.data.next_hearing_date)
+              ? dayjs(res.data.data.fronted_use_next_hearing_date)
               : null
             : null,
           stageOfCase: res.data.data.stage_of_the_case,
@@ -116,18 +115,6 @@ function Form() {
           res.data.data.map((obj) => ({
             value: obj.court_id,
             label: obj.court_name,
-          }))
-        )
-      )
-      .catch((err) => console.error(err));
-  };
-  const getStageOptions = async () => {
-    await axios(`${apiUrl}/stageOfTheCase`)
-      .then((res) =>
-        setStageOptions(
-          res.data.data.map((obj) => ({
-            value: obj.stage_id,
-            label: obj.stage_name,
           }))
         )
       )
@@ -169,8 +156,14 @@ function Form() {
         case_type: values.caseType,
         court_id: values.court,
         defendants: values.defendants,
-        last_hearing_date: values.lastHearing,
-        next_hearing_date: values.nextHearing,
+        fronted_use_last_hearing_date: values.lastHearing,
+        fronted_use_next_hearing_date: values.nextHearing,
+        last_hearing_date: values.lastHearing
+          ? dateToString(values.lastHearing.$d)
+          : "",
+        next_hearing_date: values.nextHearing
+          ? dateToString(values.nextHearing.$d)
+          : "",
         plaintiffs: values.plaintiff,
         remarks: values.remarks,
         stage_of_the_case: values.stageOfCase,
@@ -200,7 +193,10 @@ function Form() {
           setAlertMessage({
             severity: "error",
             title: "An error occured",
-            message: err.data ? err.data.message : "Something went wrong",
+            message:
+              err.response && err.response.data
+                ? err.response.data.message
+                : "Something went wrong",
           });
           setAlertOpen(true);
         });
@@ -230,8 +226,14 @@ function Form() {
         case_type: values.caseType,
         court_id: values.court,
         defendants: values.defendants,
-        last_hearing_date: values.lastHearing,
-        next_hearing_date: values.nextHearing,
+        fronted_use_last_hearing_date: values.lastHearing,
+        fronted_use_next_hearing_date: values.nextHearing,
+        last_hearing_date: values.lastHearing
+          ? dateToString(values.lastHearing.$d)
+          : "",
+        next_hearing_date: values.nextHearing
+          ? dateToString(values.nextHearing.$d)
+          : "",
         plaintiffs: values.plaintiff,
         remarks: values.remarks,
         stage_of_the_case: values.stageOfCase,
@@ -261,7 +263,10 @@ function Form() {
           setAlertMessage({
             severity: "error",
             title: "An error occured",
-            message: err.data ? err.data.message : "Something went wrong",
+            message:
+              err.response && err.response.data
+                ? err.response.data.message
+                : "Something went wrong",
           });
           setAlertOpen(true);
         });
@@ -291,12 +296,19 @@ function Form() {
         case_type: values.caseType,
         court_id: values.court,
         defendants: values.defendants,
-        last_hearing_date: values.lastHearing,
-        next_hearing_date: values.nextHearing,
+        fronted_use_last_hearing_date: values.lastHearing,
+        fronted_use_next_hearing_date: values.nextHearing,
+        last_hearing_date: values.lastHearing
+          ? dateToString(values.lastHearing.$d)
+          : "",
+        next_hearing_date: values.nextHearing
+          ? dateToString(values.nextHearing.$d)
+          : "",
         plaintiffs: values.plaintiff,
         remarks: values.remarks,
         stage_of_the_case: values.stageOfCase,
       };
+      console.log(temp);
       await axios
         .put(`${apiUrl}/courtCases/${id}`, temp)
         .then((res) => {
@@ -322,7 +334,10 @@ function Form() {
           setAlertMessage({
             severity: "error",
             title: "An error occured",
-            message: err.data ? err.data.message : "Something went wrong",
+            message:
+              err.response && err.response.data
+                ? err.response.data.message
+                : "Something went wrong",
           });
           setAlertOpen(true);
         });
@@ -507,7 +522,7 @@ function Form() {
                 onChange={handleChange}
               >
                 <MenuItem value={"Pending"}>Pending</MenuItem>
-                <MenuItem value={"Closed"}>Closed</MenuItem>
+                <MenuItem value={"Disposed"}>Disposed</MenuItem>
               </Select>
             </FormControl>
           </Grid>

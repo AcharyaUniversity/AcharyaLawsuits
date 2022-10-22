@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Tooltip } from "@mui/material";
+import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import EditIcon from "@mui/icons-material/Edit";
-import AddIcon from "@mui/icons-material/Add";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { dateToString } from "../utils/general";
 import apiUrl from "../services/api";
 import axios from "axios";
 
 const gridStyle = {
-  mb: 7,
+  mb: 3,
 
   ".MuiDataGrid-columnSeparator": {
     display: "none",
@@ -31,28 +31,47 @@ function IndexTableData() {
   const navigate = useNavigate();
 
   const columns = [
-    { field: "case_no", headerName: "Case number" },
-    { field: "case_type", headerName: "Case type" },
-    { field: "advocate_or_firm_name", headerName: "Advocate/Firm", flex: 1 },
+    {
+      field: "history",
+      headerName: "History",
+      width: 75,
+      type: "actions",
+      getActions: (params) => [
+        <Tooltip title="History">
+          <IconButton onClick={() => navigate(`/Report/${params.row.id}`)}>
+            <HistoryRoundedIcon color="blue" />
+          </IconButton>
+        </Tooltip>,
+      ],
+    },
+    { field: "case_no", headerName: "Case number", flex: 1 },
+    { field: "case_type", headerName: "Case type", flex: 1 },
+    {
+      field: "advocate_or_firm_name",
+      headerName: "Advocate/Firm",
+      flex: 1,
+      hide: true,
+    },
     {
       field: "advocate_or_firm_contact_no",
       headerName: "Firm contact",
       flex: 1,
+      hide: true,
     },
-    { field: "plaintiffs", headerName: "Plantiffs", flex: 1 },
+    { field: "plaintiffs", headerName: "Plantiffs", flex: 1, hide: true },
     { field: "defendants", headerName: "Defendants", flex: 1 },
-    { field: "appeal_ref_no", headerName: "Appeal ref" },
-    { field: "last_hearing_date", headerName: "Last hearing" },
-    { field: "next_hearing_date", headerName: "Next hearing" },
-    { field: "court_name", headerName: "Court" },
-    { field: "stage_of_the_case", headerName: "Stage" },
-    { field: "case_status", headerName: "Result" },
-    { field: "case_content", headerName: "Content" },
-    { field: "remarks", headerName: "Remarks" },
+    { field: "appeal_ref_no", headerName: "Appeal ref", flex: 1, hide: true },
+    { field: "last_hearing_date", headerName: "Last hearing", flex: 1 },
+    { field: "next_hearing_date", headerName: "Next hearing", flex: 1 },
+    { field: "court_name", headerName: "Court", flex: 1 },
+    { field: "stage_of_the_case", headerName: "Stage", flex: 1 },
+    { field: "case_status", headerName: "Result", flex: 1 },
+    { field: "case_content", headerName: "Content", flex: 1 },
+    { field: "remarks", headerName: "Remarks", flex: 1 },
     {
       field: "edit",
       headerName: "Edit",
-      flex: 1,
+      width: 0,
       type: "actions",
       getActions: (params) => [
         <Tooltip title="Edit">
@@ -67,14 +86,14 @@ function IndexTableData() {
     {
       field: "addHearing",
       headerName: "Add",
-      flex: 1,
+      width: 0,
       type: "actions",
       getActions: (params) => [
         <Tooltip title="Add hearing">
           <IconButton
             onClick={() => navigate(`/CaseForm/AddHearing/${params.row.id}`)}
           >
-            <AddIcon sx={{ color: "green" }} />
+            <AddBoxIcon color="success" />
           </IconButton>
         </Tooltip>,
       ],
@@ -89,8 +108,6 @@ function IndexTableData() {
         setRows(
           res.data.data.Paginated_data.content.map((obj) => ({
             ...obj,
-            last_hearing_date: dateToString(new Date(obj.last_hearing_date)),
-            next_hearing_date: dateToString(new Date(obj.next_hearing_date)),
           }))
         );
       })
