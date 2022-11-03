@@ -39,6 +39,7 @@ function Login() {
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
         height: "100vh",
         pt: 6,
       }}
@@ -46,7 +47,7 @@ function Login() {
       <Typography
         variant="h1"
         sx={{
-          color: "#999",
+          color: "#fffa",
           fontSize: "3rem !important ",
           textAlign: "center",
         }}
@@ -61,6 +62,8 @@ function Login() {
           p: 4,
           borderRadius: 3,
           textAlign: "right",
+          background: "#fffa",
+          backdropFilter: "blur(13px)",
         }}
       >
         <Box component="form" onSubmit={handleSubmit}>
