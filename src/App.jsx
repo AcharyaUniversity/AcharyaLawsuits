@@ -4,7 +4,6 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import { Box } from "@mui/material";
 import ThemeContextProvider from "./contexts/ThemeContextProvider";
 import AlertContextProvider from "./contexts/AlertContextProvider";
 import Header from "./components/Header";

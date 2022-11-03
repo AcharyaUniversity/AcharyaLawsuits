@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import bg from "../assets/background.jpg";
+import axios from "axios";
+import apiUrl from "../services/api";
 
 function Login() {
   const [values, setValues] = useState({ username: "", password: "" });
@@ -29,8 +31,18 @@ function Login() {
     e.preventDefault();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const temp = {
+      active: true,
+      legal_department_user_name: values.username,
+      legal_department_user_password: values.password,
+    };
+    await axios
+      .post(`${apiUrl}/legalDepartmentUsers`, temp)
+      .then((res) => console.log(res))
+      .catch((err) => console.error(err));
   };
 
   return (
