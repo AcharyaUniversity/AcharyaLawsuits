@@ -47,7 +47,7 @@ function Login() {
       <Typography
         variant="h1"
         sx={{
-          color: "#fffa",
+          color: "#000a",
           fontSize: "3rem !important ",
           textAlign: "center",
         }}
@@ -62,8 +62,8 @@ function Login() {
           p: 4,
           borderRadius: 3,
           textAlign: "right",
-          background: "#fffa",
-          backdropFilter: "blur(13px)",
+          background: "#fff7",
+          backdropFilter: "blur(23px)",
         }}
       >
         <Box component="form" onSubmit={handleSubmit}>
