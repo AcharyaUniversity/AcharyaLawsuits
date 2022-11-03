@@ -1,4 +1,3 @@
-import React from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -9,6 +8,7 @@ import { Box } from "@mui/material";
 import ThemeContextProvider from "./contexts/ThemeContextProvider";
 import AlertContextProvider from "./contexts/AlertContextProvider";
 import Header from "./components/Header";
+import Login from "./containers/Login";
 import Index from "./containers/Index";
 import Form from "./containers/Form";
 import Report from "./components/Report";
@@ -18,17 +18,18 @@ function App() {
     <ThemeContextProvider>
       <AlertContextProvider>
         <Router>
-          <Header />
-          <Box mt={7.5}>
-            <Routes>
-              <Route exact path="/" element={<Navigate to="/Index" />} />
+          <Routes>
+            <Route exact path="/" element={<Navigate to="/Login" />} />
+            <Route exact path="/Login" element={<Login />} />
+
+            <Route element={<Header />}>
               <Route exact path="/Index" element={<Index />} />
               <Route exact path="/CaseForm/New" element={<Form />} />
               <Route exact path="/CaseForm/Update/:id" element={<Form />} />
               <Route exact path="/CaseForm/AddHearing/:id" element={<Form />} />
               <Route exact path="/Report/:id" element={<Report />} />
-            </Routes>
-          </Box>
+            </Route>
+          </Routes>
         </Router>
       </AlertContextProvider>
     </ThemeContextProvider>
