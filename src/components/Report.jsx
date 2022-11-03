@@ -28,7 +28,6 @@ function Report() {
   const [rows, setRows] = useState([]);
 
   const { id } = useParams();
-  console.log(id);
 
   const columns = [
     { field: "case_type", headerName: "Case type", flex: 1 },
