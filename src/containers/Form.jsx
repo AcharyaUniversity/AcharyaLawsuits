@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -308,7 +309,6 @@ function Form() {
         remarks: values.remarks,
         stage_of_the_case: values.stageOfCase,
       };
-      console.log(temp);
       await axios
         .put(`${apiUrl}/courtCases/${id}`, temp)
         .then((res) => {
