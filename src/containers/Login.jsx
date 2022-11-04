@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -12,6 +13,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import useAlert from "../hooks/useAlert";
+import useToken from "../hooks/useToken";
 import bg from "../assets/background.jpg";
 import axios from "axios";
 import apiUrl from "../services/api";
@@ -19,6 +22,10 @@ import apiUrl from "../services/api";
 function Login() {
   const [values, setValues] = useState({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+
+  const { setAlertMessage, setAlertOpen } = useAlert();
+  const { setToken } = useToken();
+  const { navigate } = useNavigate();
 
   const handleChange = (e) => {
     setValues((prev) => ({
@@ -34,15 +41,29 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const temp = {
-      active: true,
-      legal_department_user_name: values.username,
-      legal_department_user_password: values.password,
-    };
-    await axios
-      .post(`${apiUrl}/legalDepartmentUsers`, temp)
-      .then((res) => console.log(res))
-      .catch((err) => console.error(err));
+    await axios(
+      `${apiUrl}/regenrationOfToken?legal_department_user_name=${values.username}&legal_department_user_password=${values.password}`
+    )
+      .then((res) => {
+        setToken(res.data.data.legal_validation_token);
+        setAlertMessage({
+          severity: "success",
+          title: "Logged in",
+        });
+        setAlertOpen(true);
+        navigate("/Index");
+      })
+      .catch((err) => {
+        setAlertMessage({
+          severity: "error",
+          title: "Error",
+          message: err.response
+            ? err.response.data.message
+            : "An error occured",
+        });
+        setAlertOpen(true);
+        console.error(err);
+      });
   };
 
   return (
@@ -59,14 +80,15 @@ function Login() {
       <Typography
         variant="h1"
         sx={{
-          color: "#000a",
+          color: "#000b",
           fontSize: "3rem !important ",
           textAlign: "center",
         }}
       >
-        Acharya Institutes cases
+        Acharya Group Lawsuits
       </Typography>
       <Paper
+        elevation={0}
         sx={{
           width: "91%",
           maxWidth: 666,
