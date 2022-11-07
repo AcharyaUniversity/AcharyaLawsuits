@@ -14,18 +14,17 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import useAlert from "../hooks/useAlert";
-import useToken from "../hooks/useToken";
 import bg from "../assets/background.jpg";
-import axios from "axios";
-import apiUrl from "../services/api";
+import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
 
 function Login() {
   const [values, setValues] = useState({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
 
   const { setAlertMessage, setAlertOpen } = useAlert();
-  const { setToken } = useToken();
   const { navigate } = useNavigate();
+  const { setAuth } = useAuth();
 
   const handleChange = (e) => {
     setValues((prev) => ({
@@ -42,16 +41,16 @@ function Login() {
     e.preventDefault();
 
     await axios(
-      `${apiUrl}/regenrationOfToken?legal_department_user_name=${values.username}&legal_department_user_password=${values.password}`
+      `/api/regenrationOfToken?legal_department_user_name=${values.username}&legal_department_user_password=${values.password}`
     )
       .then((res) => {
-        setToken(res.data.data.legal_validation_token);
+        // setToken(res.data.data.legal_validation_token);
         setAlertMessage({
           severity: "success",
           title: "Logged in",
         });
         setAlertOpen(true);
-        navigate("/Index");
+        navigate("/Index", { replace: true });
       })
       .catch((err) => {
         setAlertMessage({

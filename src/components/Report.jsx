@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import apiUrl from "../services/api";
-import axios from "axios";
+import axios from "../api/axios";
 
 const gridStyle = {
   my: 2,
@@ -55,9 +54,7 @@ function Report() {
   ];
 
   const getCases = async () => {
-    await axios(
-      `${apiUrl}/courtCaseDetailsHistoryOnCaseNo?court_cases_id=${id}`
-    )
+    await axios(`/api//courtCaseDetailsHistoryOnCaseNo?court_cases_id=${id}`)
       .then((res) => {
         setRows(
           res.data.data.map((obj) => ({

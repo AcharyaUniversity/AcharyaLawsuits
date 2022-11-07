@@ -1,19 +1,9 @@
-import { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 import AcharyaImg from "../assets/logo.jpg";
-import useToken from "../hooks/useToken";
 
 function Header() {
   const navigate = useNavigate();
-
-  const { token } = useToken();
-
-  console.log(token);
-
-  useEffect(() => {
-    if (!token) navigate("/Login");
-  }, [token]);
 
   return (
     <>

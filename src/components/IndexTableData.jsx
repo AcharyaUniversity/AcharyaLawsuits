@@ -5,8 +5,7 @@ import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import EditIcon from "@mui/icons-material/Edit";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import apiUrl from "../services/api";
-import axios from "axios";
+import axios from "../api/axios";
 
 const gridStyle = {
   mb: 3,
@@ -102,7 +101,7 @@ function IndexTableData() {
 
   const getCases = async () => {
     await axios(
-      `${apiUrl}/fetchAllCourtCasesDetails?page=0&page_size=999&sort=created_date`
+      `/api/fetchAllCourtCasesDetails?page=0&page_size=999&sort=created_date`
     )
       .then((res) => {
         setRows(

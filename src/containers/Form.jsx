@@ -15,8 +15,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import apiUrl from "../services/api";
-import axios from "axios";
+import axios from "../api/axios";
 import { dateToString } from "../utils/general";
 
 const initValues = {
@@ -78,7 +77,7 @@ function Form() {
   }, [formType]);
 
   const getCaseDetails = async () => {
-    await axios(`${apiUrl}/courtCases/${id}`)
+    await axios(`/api/courtCases/${id}`)
       .then((res) => {
         setValues({
           caseType: res.data.data.case_type,
@@ -109,7 +108,7 @@ function Form() {
   };
 
   const getCourtOptions = async () => {
-    await axios(`${apiUrl}/court`)
+    await axios(`/api/court`)
       .then((res) =>
         setCourtOptions(
           res.data.data.map((obj) => ({
@@ -169,7 +168,7 @@ function Form() {
         stage_of_the_case: values.stageOfCase,
       };
       await axios
-        .post(`${apiUrl}/courtCases`, temp)
+        .post(`/api/courtCases`, temp)
         .then((res) => {
           if (res.status === 200 || res.status === 201) {
             navigate("/Index", { replace: true });
@@ -239,7 +238,7 @@ function Form() {
         stage_of_the_case: values.stageOfCase,
       };
       await axios
-        .put(`${apiUrl}/courtCasesUpdateOnly/${id}`, temp)
+        .put(`/api/courtCasesUpdateOnly/${id}`, temp)
         .then((res) => {
           if (res.status === 200 || res.status === 201) {
             navigate("/Index", { replace: true });
@@ -309,7 +308,7 @@ function Form() {
         stage_of_the_case: values.stageOfCase,
       };
       await axios
-        .put(`${apiUrl}/courtCases/${id}`, temp)
+        .put(`/api/courtCases/${id}`, temp)
         .then((res) => {
           if (res.status === 200 || res.status === 201) {
             navigate("/Index", { replace: true });

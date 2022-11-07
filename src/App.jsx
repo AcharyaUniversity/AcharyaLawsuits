@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import ThemeContextProvider from "./contexts/ThemeContextProvider";
 import AlertContextProvider from "./contexts/AlertContextProvider";
-import UserContextProvider from "./contexts/UserContextProvider";
 import Header from "./components/Header";
 import Login from "./containers/Login";
 import Index from "./containers/Index";
@@ -16,28 +15,22 @@ import Report from "./components/Report";
 function App() {
   return (
     <ThemeContextProvider>
-      <UserContextProvider>
-        <AlertContextProvider>
-          <Router>
-            <Routes>
-              <Route exact path="/" element={<Navigate to="/Index" />} />
-              <Route exact path="/Login" element={<Login />} />
+      <AlertContextProvider>
+        <Router>
+          <Routes>
+            <Route exact path="/" element={<Navigate to="/Index" />} />
+            <Route exact path="/Login" element={<Login />} />
 
-              <Route element={<Header />}>
-                <Route exact path="/Index" element={<Index />} />
-                <Route exact path="/CaseForm/New" element={<Form />} />
-                <Route exact path="/CaseForm/Update/:id" element={<Form />} />
-                <Route
-                  exact
-                  path="/CaseForm/AddHearing/:id"
-                  element={<Form />}
-                />
-                <Route exact path="/Report/:id" element={<Report />} />
-              </Route>
-            </Routes>
-          </Router>
-        </AlertContextProvider>
-      </UserContextProvider>
+            <Route element={<Header />}>
+              <Route exact path="/Index" element={<Index />} />
+              <Route exact path="/CaseForm/New" element={<Form />} />
+              <Route exact path="/CaseForm/Update/:id" element={<Form />} />
+              <Route exact path="/CaseForm/AddHearing/:id" element={<Form />} />
+              <Route exact path="/Report/:id" element={<Report />} />
+            </Route>
+          </Routes>
+        </Router>
+      </AlertContextProvider>
     </ThemeContextProvider>
   );
 }
