@@ -23,7 +23,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { setAlertMessage, setAlertOpen } = useAlert();
-  const { navigate } = useNavigate();
+  const navigate = useNavigate();
   const { setAuth } = useAuth();
 
   const handleChange = (e) => {
