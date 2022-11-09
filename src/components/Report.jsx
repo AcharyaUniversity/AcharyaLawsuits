@@ -54,7 +54,7 @@ function Report() {
   ];
 
   const getCases = async () => {
-    await axios(`/api//courtCaseDetailsHistoryOnCaseNo?court_cases_id=${id}`)
+    await axios(`/api/courtCaseDetailsHistoryOnCaseNo?court_cases_id=${id}`)
       .then((res) => {
         setRows(
           res.data.data.map((obj) => ({

@@ -15,7 +15,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import useAlert from "../hooks/useAlert";
 import bg from "../assets/background.jpg";
-import axios from "../api/axios";
+import axios from "axios";
 import useAuth from "../hooks/useAuth";
 
 function Login() {
@@ -41,10 +41,16 @@ function Login() {
     e.preventDefault();
 
     await axios(
-      `/api/regenrationOfToken?legal_department_user_name=${values.username}&legal_department_user_password=${values.password}`
+      `https://www.stageapi-acharyainstitutes.in/api/regenrationOfToken?legal_department_user_name=${values.username}&legal_department_user_password=${values.password}`
     )
       .then((res) => {
-        // setToken(res.data.data.legal_validation_token);
+        console.log(res.data.data);
+        setAuth({
+          username: res.data.data.legal_department_user_name,
+          password: res.data.data.legal_department_user_password,
+          token: res.data.data.legal_validation_token,
+        });
+        localStorage.setItem("token", res.data.data.legal_validation_token);
         setAlertMessage({
           severity: "success",
           title: "Logged in",
