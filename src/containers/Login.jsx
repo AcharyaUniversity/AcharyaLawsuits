@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -21,10 +21,18 @@ import useAuth from "../hooks/useAuth";
 function Login() {
   const [values, setValues] = useState({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const { setAlertMessage, setAlertOpen } = useAlert();
   const navigate = useNavigate();
   const { setAuth } = useAuth();
+
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     if (loggedIn) navigate("/Index", { replace: true });
+  //   }, 3000);
+  //   return () => clearTimeout(timer);
+  // }, [loggedIn]);
 
   const handleChange = (e) => {
     setValues((prev) => ({
@@ -44,7 +52,6 @@ function Login() {
       `https://www.stageapi-acharyainstitutes.in/api/regenrationOfToken?legal_department_user_name=${values.username}&legal_department_user_password=${values.password}`
     )
       .then((res) => {
-        console.log(res.data.data);
         setAuth({
           username: res.data.data.legal_department_user_name,
           password: res.data.data.legal_department_user_password,
@@ -56,6 +63,7 @@ function Login() {
           title: "Logged in",
         });
         setAlertOpen(true);
+        // setLoggedIn(true);
         navigate("/Index", { replace: true });
       })
       .catch((err) => {

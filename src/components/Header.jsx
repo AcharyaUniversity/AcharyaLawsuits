@@ -1,9 +1,14 @@
+import { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 import AcharyaImg from "../assets/logo.jpg";
 
 function Header() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) navigate("/Login");
+  }, []);
 
   return (
     <>
