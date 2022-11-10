@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-const token = localStorage.getItem("token");
+const token = JSON.parse(localStorage.getItem("AcharyaCaseUserDetails"))?.token;
 
 const axios = Axios.create({
   baseURL: `https://www.stageapi-acharyainstitutes.in`,

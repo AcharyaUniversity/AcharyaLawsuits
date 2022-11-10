@@ -26,7 +26,7 @@ function Header() {
     {
       label: "Logout",
       action: () => {
-        localStorage.setItem("token", "");
+        localStorage.setItem("AcharyaCaseUserDetails", null);
         navigate("/Login");
       },
     },
@@ -40,7 +40,8 @@ function Header() {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) navigate("/Login");
+    if (!JSON.parse(localStorage.getItem("AcharyaCaseUserDetails"))?.token)
+      navigate("/Login");
   }, []);
 
   return (

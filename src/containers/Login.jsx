@@ -42,7 +42,14 @@ function Login() {
       `https://www.stageapi-acharyainstitutes.in/api/regenrationOfToken?legal_department_user_name=${values.username}&legal_department_user_password=${values.password}`
     )
       .then((res) => {
-        localStorage.setItem("token", res.data.data.legal_validation_token);
+        localStorage.setItem(
+          "AcharyaCaseUserDetails",
+          JSON.stringify({
+            username: res.data.data.legal_department_user_name,
+            password: res.data.data.legal_department_user_password,
+            token: res.data.data.legal_validation_token,
+          })
+        );
         setAlertMessage({
           severity: "success",
           title: "Logged in",

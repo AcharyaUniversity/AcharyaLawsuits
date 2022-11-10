@@ -14,7 +14,9 @@ import Report from "./components/Report";
 import ChangePassword from "./containers/ChangePassword";
 
 function App() {
-  const token = localStorage.getItem("token");
+  const token = JSON.parse(
+    localStorage.getItem("AcharyaCaseUserDetails")
+  )?.token;
 
   return (
     <ThemeContextProvider>
