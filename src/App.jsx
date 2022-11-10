@@ -11,6 +11,7 @@ import Login from "./containers/Login";
 import Index from "./containers/Index";
 import Form from "./containers/Form";
 import Report from "./components/Report";
+import ChangePassword from "./containers/ChangePassword";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -35,6 +36,11 @@ function App() {
               <Route exact path="/CaseForm/Update/:id" element={<Form />} />
               <Route exact path="/CaseForm/AddHearing/:id" element={<Form />} />
               <Route exact path="/Report/:id" element={<Report />} />
+              <Route
+                exact
+                path="/ChangePassword"
+                element={<ChangePassword />}
+              />
             </Route>
           </Routes>
         </Router>

@@ -1,10 +1,43 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
-import { AppBar, Toolbar, Typography, Box } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  Button,
+  Tooltip,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import AcharyaImg from "../assets/logo.jpg";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 function Header() {
+  const [anchorElUser, setAnchorElUser] = useState(null);
+
   const navigate = useNavigate();
+
+  const options = [
+    {
+      label: "Change password",
+      action: () => navigate("/ChangePassword"),
+    },
+    {
+      label: "Logout",
+      action: () => {
+        localStorage.setItem("token", "");
+        navigate("/Login");
+      },
+    },
+  ];
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
 
   useEffect(() => {
     if (!localStorage.getItem("token")) navigate("/Login");
@@ -22,6 +55,43 @@ function Header() {
               onClick={() => navigate("/")}
             />
           </Typography>
+
+          <Tooltip title="Vignesh">
+            <Button
+              onClick={handleOpenUserMenu}
+              color="secondary"
+              sx={{ borderRadius: 50, minWidth: 0, p: 0, ml: 1.5 }}
+            >
+              <AccountCircleIcon sx={{ fontSize: "3rem" }} />
+            </Button>
+          </Tooltip>
+          <Menu
+            sx={{ mt: "45px" }}
+            anchorEl={anchorElUser}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            {options.map((op) => (
+              <MenuItem
+                key={op.label}
+                onClick={() => {
+                  op.action();
+                  handleCloseUserMenu();
+                }}
+              >
+                <Typography textAlign="center">{op.label}</Typography>
+              </MenuItem>
+            ))}
+          </Menu>
         </Toolbar>
       </AppBar>
       <Box mt={7.5}>
