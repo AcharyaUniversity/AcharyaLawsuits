@@ -13,12 +13,20 @@ import Form from "./containers/Form";
 import Report from "./components/Report";
 
 function App() {
+  const token = localStorage.getItem("token");
+
   return (
     <ThemeContextProvider>
       <AlertContextProvider>
         <Router>
           <Routes>
-            <Route exact path="/" element={<Navigate to="/Index" />} />
+            <Route
+              exact
+              path="/"
+              element={
+                token ? <Navigate to="/Index" /> : <Navigate to="/Login" />
+              }
+            />
             <Route exact path="/Login" element={<Login />} />
 
             <Route element={<Header />}>
