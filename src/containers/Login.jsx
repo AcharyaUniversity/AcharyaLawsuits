@@ -39,7 +39,7 @@ function Login() {
     e.preventDefault();
 
     await axios(
-      `https://www.stageapi-acharyainstitutes.in/api/regenrationOfToken?legal_department_user_name=${values.username}&legal_department_user_password=${values.password}`
+      `https://www.api-prod-acharyainstitutes.in/Acharya_University_Mess/api/regenrationOfToken?legal_department_user_name=${values.username}&legal_department_user_password=${values.password}`
     )
       .then((res) => {
         localStorage.setItem(
